@@ -1,0 +1,26 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "p.marki@wp.pl",
+                "Name": "Piotr Markiewicz"
+            }
+        ],
+        "Category": "Utilities",
+        "Description": "Configurable button to launch scripts and monitor statuses",
+        "Description[en_GB]": "Configurable button to launch scripts and monitor statuses",
+        "Icon": "emblem-checked",
+        "Id": "com.github.configurable_button",
+        "License": "GPL",
+        "Name": "Configurable Button",
+        "Name[en_GB]": "Configurable Button",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "0.2.0",
+        "Website": "https://github.com/pmarki/plasmoid-button"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}
