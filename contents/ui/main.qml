@@ -16,15 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
-import QtQuick 2.2
-import QtQuick.Layouts 1.1
-import QtQuick.Controls 1.4
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.plasma5support as Plasma5Support
+import org.kde.kirigami as Kirigami
 
-Item {
+PlasmoidItem {
     id: root
+    Plasmoid.onActivated: activated();
     property bool onScriptEnabled: Plasmoid.configuration.onScriptEnabled
     property string onScript: Plasmoid.configuration.onScript
     property bool offScriptEnabled: Plasmoid.configuration.offScriptEnabled
@@ -40,10 +43,10 @@ Item {
     //When script is running pause status check script
     property bool scriptRunning: false
     
-    Plasmoid.preferredRepresentation: Plasmoid.compactRepresentation
-    
+    preferredRepresentation: fullRepresentation
+
     onStatusIntervalChanged: {
-        console.log('* Interval changed: ' +statusInterval);
+        console.log('* Interval changed: ' + statusInterval);
         checkStatusTimer.interval = statusInterval * 1000;
     }
     
@@ -64,11 +67,11 @@ Item {
         }
     }
  
-    PlasmaCore.DataSource {
+    Plasma5Support.DataSource {
         id: executable
         engine: "executable"
         connectedSources: []
-        onNewData: { 
+        onNewData: function(sourceName, data) {
             if (!scriptRunning) {
                 //Behaviour for status script:
                 if (data['exit code'] != 0) {
@@ -111,8 +114,15 @@ Item {
     function checkStatus() {
         executable.exec(checkStatusScript);
     }
-    
-    Plasmoid.compactRepresentation: RowLayout {
+
+    function activated() {
+        if ((checked && offScriptEnabled) || (!checked && onScriptEnabled)) {
+            checked = checked == true ? false : true
+            toggleAction();
+        }
+    }
+
+    fullRepresentation: RowLayout {
         id: mainItem
         spacing: 0
         PlasmaComponents.Label {
@@ -122,7 +132,7 @@ Item {
         Item {
             Layout.fillWidth: true
         }
-        PlasmaCore.IconItem {
+        Kirigami.Icon {
             id: icon
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -131,12 +141,7 @@ Item {
                 id: mouseArea
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: {
-                    if ((checked && offScriptEnabled) || (!checked && onScriptEnabled)) {
-                        checked = checked == true ? false : true
-                        toggleAction();
-                    }
-                }
+                onClicked: activated();
             }
             BusyIndicator {
                 id: busy
